@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final utlizzo versione della libreria JasperReports6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.21.0.final utlizzo versione della libreria JasperReports6.21.0-4f56c4f36cd19e17675219a9ac4692d5f0f13b06  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reportAlloggi" language="groovy" pageWidth="595" pageHeight="841" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="Report" uuid="2cfa5ad0-b19b-423e-81bc-f03caca441d1">
 	<property name="ireport.zoom" value="1.3660269107301415"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="172"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="AterUDBandi.xml"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ReSysWeb"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="472"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="519"/>
 	<style name="Default" isDefault="true" fontName="ATER Fonts - Arimo"/>
@@ -60,13 +60,15 @@ g.dataPubblicazione as dataPubblicazioneGrad,
 b.annoBando as annoBando,
 b.numeroBando as numeroBando,
 b.dataPubblicazione as dataPubblicazione,
-b.oggetto as oggetto
-From GraduatoriaPunteggio grad, Graduatoria g, Anagrafiche anagrafica, Bandi b
-Where grad.codiceAnagrafica = anagrafica.codice
-And b.idBando = grad.id.idBando
-And g.id.idBando = grad.id.idBando
-And g.id.idGraduatoria = grad.id.idGraduatoria
-And ( $P{IDBANDO} is null Or $P{IDBANDO} < 1.0 Or $P{IDBANDO} = grad.id.idBando )
+b.oggetto as oggetto,
+domanda.numeroProtocollo as numeroProtocollo,
+domanda.annoProtocollo as annoProtocollo
+From GraduatoriaPunteggio grad
+left join grad.domanda domanda
+left join grad.graduatoria g
+left join g.bandoGenerale b
+left join domanda.anagrafica anagrafica
+Where ( $P{IDBANDO} is null Or $P{IDBANDO} < 1.0 Or $P{IDBANDO} = grad.id.idBando )
 And ( $P{IDGRADUATORIA} is null Or $P{IDGRADUATORIA} < 1.0 Or $P{IDGRADUATORIA} = grad.id.idGraduatoria )
 Order by COALESCE( grad.stato, 'AAA' ) ASC, case when (grad.punteggioTotale = 0 and stato = 'ESCLUSA') then 9999 else grad.posizioneGraduatoria end, anagrafica.cognomeRagione, anagrafica.nominativo]]>
 	</queryString>
@@ -88,12 +90,14 @@ Order by COALESCE( grad.stato, 'AAA' ) ASC, case when (grad.punteggioTotale = 0 
 	<field name="dataPubblicazione" class="java.util.Date"/>
 	<field name="oggetto" class="java.lang.String"/>
 	<field name="dataPubblicazioneGrad" class="java.sql.Date"/>
+	<field name="numeroProtocollo" class="java.lang.String"/>
+	<field name="annoProtocollo" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="743" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="1" y="197" width="554" height="18" uuid="9ce792e4-7d1b-48e0-ba88-b972edb4101a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
@@ -172,7 +176,7 @@ di edilizia residenziale pubblica sovvenzionata
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subCommissione.jasper"]]></subreportExpression>
 			</subreport>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="1" y="637" width="554" height="18" uuid="6b808a7f-db15-4ed7-887d-5611b7f16724"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
@@ -193,7 +197,7 @@ di edilizia residenziale pubblica sovvenzionata
 				</textElement>
 				<textFieldExpression><![CDATA[$P{INTESTAZIONE2}]]></textFieldExpression>
 			</textField>
-			<image scaleImage="RetainShape" hAlign="Center">
+			<image scaleImage="RetainShape" hAlign="Center" onErrorType="Blank">
 				<reportElement x="225" y="0" width="105" height="64" uuid="1830f29d-20cf-4b75-9b4e-91d2ec9000d4"/>
 				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
@@ -209,7 +213,7 @@ di edilizia residenziale pubblica sovvenzionata
 	<pageHeader>
 		<band height="23">
 			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="0" y="0" width="555" height="17" uuid="a6993fb0-2e9f-4390-aa84-458986b8f897"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
@@ -227,7 +231,10 @@ di edilizia residenziale pubblica sovvenzionata
 	<columnHeader>
 		<band height="17">
 			<staticText>
-				<reportElement mode="Opaque" x="243" y="0" width="192" height="17" backcolor="#E0E0E0" uuid="44fcccf2-c30f-482d-9b2f-276a080697c4"/>
+				<reportElement mode="Opaque" x="285" y="0" width="150" height="17" backcolor="#E0E0E0" uuid="44fcccf2-c30f-482d-9b2f-276a080697c4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.75" lineColor="#CCCCCC"/>
 					<topPen lineWidth="0.75" lineColor="#CCCCCC"/>
@@ -283,7 +290,10 @@ di edilizia residenziale pubblica sovvenzionata
 				<text><![CDATA[Punteggio]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="51" y="0" width="192" height="17" backcolor="#E0E0E0" uuid="d689a0d4-e1c9-4718-b263-aee1b76d079a"/>
+				<reportElement mode="Opaque" x="134" y="0" width="150" height="17" backcolor="#E0E0E0" uuid="d689a0d4-e1c9-4718-b263-aee1b76d079a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<box>
 					<pen lineWidth="0.75" lineColor="#CCCCCC"/>
 					<topPen lineWidth="0.75" lineColor="#CCCCCC"/>
@@ -296,32 +306,50 @@ di edilizia residenziale pubblica sovvenzionata
 				</textElement>
 				<text><![CDATA[Cognome]]></text>
 			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="51" y="0" width="83" height="17" backcolor="#E0E0E0" uuid="8546ee59-d9a8-4efe-8e13-b18ca602fa15">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.75" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Protocollo]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="17" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="MultiLineBackGround" positionType="Float" stretchType="RelativeToTallestObject" x="485" y="0" width="70" height="17" uuid="5095287f-1d71-4831-8ee1-94cbf2cebe10"/>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{stato}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="##0.00  " isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="##0.00  " isBlankWhenNull="true">
 				<reportElement style="MultiLineBackGround" positionType="Float" stretchType="RelativeToTallestObject" x="435" y="0" width="50" height="17" uuid="2c9b6c57-e088-424d-a008-d73759d242c6"/>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
 				<textElement textAlignment="Center">
 					<font size="9"/>
@@ -330,36 +358,42 @@ di edilizia residenziale pubblica sovvenzionata
 ( $F{stato}.toUpperCase( ).indexOf( "ESCLUS" ) > -1 ||
   $F{stato}.toUpperCase( ).indexOf( "ANNUL" ) > -1 ) ) ? "---" : $F{punteggioTotale}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" evaluationTime="Column" isBlankWhenNull="true">
-				<reportElement style="MultiLineBackGround" stretchType="RelativeToTallestObject" x="243" y="0" width="192" height="17" uuid="c911bdd1-c527-4080-8222-3faf4903f97f"/>
+			<textField textAdjust="StretchHeight" evaluationTime="Column" isBlankWhenNull="true">
+				<reportElement style="MultiLineBackGround" stretchType="RelativeToTallestObject" x="285" y="0" width="150" height="17" uuid="c911bdd1-c527-4080-8222-3faf4903f97f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
 				<textFieldExpression><![CDATA[$F{nominativo}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="MultiLineBackGround" stretchType="RelativeToTallestObject" x="51" y="0" width="192" height="17" uuid="956a92e3-3894-4156-8e10-8cbd49a917c0"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="MultiLineBackGround" stretchType="RelativeToTallestObject" x="134" y="0" width="150" height="17" uuid="956a92e3-3894-4156-8e10-8cbd49a917c0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
 				<textFieldExpression><![CDATA[$F{cognomeRagione}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="MultiLineBackGround" positionType="Float" stretchType="RelativeToTallestObject" x="1" y="0" width="50" height="17" uuid="a475db90-8c00-4037-a304-41a375cd6408"/>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
 				<textElement textAlignment="Center">
 					<font size="9"/>
@@ -369,16 +403,37 @@ di edilizia residenziale pubblica sovvenzionata
   $F{stato}.toUpperCase( ).indexOf( "ANNUL" ) > -1 ) ) ? "---" :
  $F{posizioneGraduatoria}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="MultiLineBackGround" stretchType="RelativeToTallestObject" x="243" y="0" width="192" height="17" uuid="72981b2f-4d15-48f5-aa7a-a425fa3aa3ba"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="MultiLineBackGround" stretchType="RelativeToTallestObject" x="285" y="0" width="150" height="17" uuid="72981b2f-4d15-48f5-aa7a-a425fa3aa3ba">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
 				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
 					<pen lineColor="#CCCCCC"/>
-					<topPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<leftPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<bottomPen lineWidth="0.25" lineColor="#CCCCCC"/>
-					<rightPen lineWidth="0.25" lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
 				<textFieldExpression><![CDATA[$F{nominativo}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="MultiLineBackGround" positionType="Float" stretchType="RelativeToTallestObject" x="51" y="0" width="83" height="17" uuid="28dc8f8a-bdc9-4a4e-98bf-1a5142a4f836">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box topPadding="5" leftPadding="5" bottomPadding="5" rightPadding="5">
+					<pen lineColor="#CCCCCC"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroProtocollo}+"/"+$F{annoProtocollo}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
