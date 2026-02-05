@@ -52,8 +52,8 @@ grad.stato as stato,
 grad.codiceAnagrafica as codiceAnagrafica,
 grad.sorteggiato as sorteggiato,
 grad.daSorteggiare as daSorteggiare,
-anagrafica.cognomeRagione as cognomeRagione,
-anagrafica.nominativo as nominativo,
+UPPER(anagrafica.cognomeRagione) as cognomeRagione,
+UPPER(anagrafica.nominativo) as nominativo,
 anagrafica.dataNascita as dataNascita,
 g.descrizione as descrizione,
 g.dataPubblicazione as dataPubblicazioneGrad,
@@ -70,7 +70,7 @@ left join g.bandoGenerale b
 left join domanda.anagrafica anagrafica
 Where ( $P{IDBANDO} is null Or $P{IDBANDO} < 1.0 Or $P{IDBANDO} = grad.id.idBando )
 And ( $P{IDGRADUATORIA} is null Or $P{IDGRADUATORIA} < 1.0 Or $P{IDGRADUATORIA} = grad.id.idGraduatoria )
-Order by COALESCE( grad.stato, 'AAA' ) ASC, case when (grad.punteggioTotale = 0 and stato = 'ESCLUSA') then 9999 else grad.posizioneGraduatoria end, anagrafica.cognomeRagione, anagrafica.nominativo]]>
+Order by COALESCE( grad.stato, 'AAA' ) ASC, case when (grad.punteggioTotale = 0 and stato = 'ESCLUSA') then 9999 else grad.posizioneGraduatoria end, UPPER(anagrafica.cognomeRagione), UPPER(anagrafica.nominativo)]]>
 	</queryString>
 	<field name="idBando" class="java.lang.Double"/>
 	<field name="idGraduatoria" class="java.lang.Double"/>
@@ -384,7 +384,7 @@ di edilizia residenziale pubblica sovvenzionata
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
-				<textFieldExpression><![CDATA[UPPER($F{cognomeRagione})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cognomeRagione}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="MultiLineBackGround" positionType="Float" stretchType="RelativeToTallestObject" x="1" y="0" width="50" height="17" uuid="a475db90-8c00-4037-a304-41a375cd6408"/>
@@ -415,7 +415,7 @@ di edilizia residenziale pubblica sovvenzionata
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#CCCCCC"/>
 				</box>
-				<textFieldExpression><![CDATA[UPPER($F{nominativo})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nominativo}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="MultiLineBackGround" positionType="Float" stretchType="RelativeToTallestObject" x="51" y="0" width="83" height="17" uuid="28dc8f8a-bdc9-4a4e-98bf-1a5142a4f836">
